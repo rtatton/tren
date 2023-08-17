@@ -64,10 +64,10 @@ public final class State extends PartialState implements Comparable<State> {
   }
 
   private Stream<State> leafSuccessors(Domino leaf) {
-    return successors(leaf).map(domino -> successor(leaf, domino));
+    return compatible(leaf).map(domino -> successor(leaf, domino));
   }
 
-  private Stream<Domino> successors(Domino domino) {
+  private Stream<Domino> compatible(Domino domino) {
     return remaining().stream().map(d -> d.oriented(domino)).filter(Objects::nonNull);
   }
 
@@ -95,7 +95,7 @@ public final class State extends PartialState implements Comparable<State> {
 
   private boolean isDoubleLeaf(Domino domino) {
     // A double is only a valid leaf if there exists another domino to satisfy it.
-    return train().outDegree(domino) < 3 && successors(domino).findAny().isPresent();
+    return train().outDegree(domino) < 3 && compatible(domino).findAny().isPresent();
   }
 
   private boolean isNonDoubleLeaf(Domino domino) {

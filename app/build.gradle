@@ -1,0 +1,46 @@
+plugins {
+    id "java"
+    id "application"
+    id "com.diffplug.spotless" version "6.20.0"
+}
+
+group "tren"
+version "1.0"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+application {
+    mainClass = "tren.App"
+}
+
+repositories {
+    mavenCentral()
+}
+
+spotless {
+    java {
+        target "src/*/java/**/*.java"
+        importOrder()
+        removeUnusedImports()
+        cleanthat()
+        googleJavaFormat()
+        formatAnnotations()
+    }
+}
+
+dependencies {
+    implementation "com.typesafe:config:1.4.2"
+    implementation "com.google.guava:guava:31.1-jre"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -57,11 +57,6 @@ public final class State extends PartialState implements Comparable<State> {
     return Double.compare(fitness, state.fitness);
   }
 
-  @Override
-  public String toString() {
-    return "%s[value=%f, fitness=%f]".formatted(getClass().getSimpleName(), value, fitness);
-  }
-
   private Stream<Domino> leaves(int seed) {
     return compatible(Domino.ofDouble(seed));
   }

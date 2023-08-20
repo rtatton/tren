@@ -66,6 +66,17 @@ public class PartialState {
     return Objects.hash(train, remaining);
   }
 
+  @Override
+  public String toString() {
+    return "%s[trainSize=%d, trainValue=%d, remainingSize=%d, remainingValue=%d]"
+        .formatted(
+            getClass().getSimpleName(),
+            trainSize(),
+            trainValue(),
+            remainingSize(),
+            remainingValue());
+  }
+
   private int value(Collection<Domino> dominos) {
     return dominos.stream().mapToInt(Domino::value).sum();
   }

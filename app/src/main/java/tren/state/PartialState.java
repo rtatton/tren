@@ -56,9 +56,8 @@ public class PartialState {
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof PartialState state) {
+    if (obj instanceof PartialState state)
       return train.equals(state.train) && remaining.equals(state.remaining);
-    }
     return false;
   }
 

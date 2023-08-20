@@ -41,12 +41,8 @@ public record Domino(int top, int bottom) {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj instanceof Domino d) {
-      return top == d.top && bottom == d.bottom || top == d.bottom && bottom == d.top;
-    }
+    if (obj instanceof Domino d)
+      return (top == d.top && bottom == d.bottom) || (top == d.bottom && bottom == d.top);
     return false;
   }
 

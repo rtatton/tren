@@ -1,8 +1,9 @@
 package tren;
 
-import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import tren.function.Distance;
@@ -97,7 +98,7 @@ public final class TrainBuilder {
   }
 
   private Queue<State> newFrontier(Collection<Domino> dominos) {
-    var frontier = Queues.<State>newPriorityQueue();
+    var frontier = new PriorityQueue<State>(Comparator.reverseOrder());
     frontier.add(State.initial(dominos, heuristic));
     return frontier;
   }

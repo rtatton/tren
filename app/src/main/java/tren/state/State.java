@@ -3,9 +3,11 @@ package tren.state;
 import com.google.common.collect.Sets;
 import com.google.common.graph.Graph;
 import com.google.common.graph.Graphs;
+import com.google.common.graph.MutableGraph;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import tren.Domino;
 import tren.TrainBuilder;
@@ -41,7 +43,9 @@ public final class State extends PartialState implements Comparable<State> {
   }
 
   public List<State> successors(int seed) {
-    return (value == 0 ? leaves(seed) : leaves()).flatMap(this::leafSuccessors).toList();
+    return value == 0
+        ? leaves(seed).flatMap(this::seedSuccessors).toList()
+        : leaves().flatMap(this::successors).toList();
   }
 
   public double value() {
@@ -58,11 +62,7 @@ public final class State extends PartialState implements Comparable<State> {
   }
 
   private Stream<Domino> leaves(int seed) {
-    return compatible(Domino.ofDouble(seed));
-  }
-
-  private Stream<Domino> compatible(Domino domino) {
-    return remaining().stream().map(d -> d.oriented(domino)).filter(Objects::nonNull);
+    return Stream.of(Domino.ofDouble(seed));
   }
 
   private Stream<Domino> leaves() {
@@ -73,19 +73,27 @@ public final class State extends PartialState implements Comparable<State> {
     return train().outDegree(domino) < (domino.isDouble() ? 3 : 1);
   }
 
-  private Stream<State> leafSuccessors(Domino leaf) {
+  private Stream<Domino> compatible(Domino domino) {
+    return remaining().stream().map(d -> d.oriented(domino)).filter(Objects::nonNull);
+  }
+
+  private Stream<State> successors(Domino leaf) {
     return compatible(leaf)
         .filter(domino -> !domino.isDouble() || isSatisfiable(domino))
-        .map(domino -> successor(leaf, domino));
+        .map(domino -> successor(train -> train.putEdge(leaf, domino)));
   }
 
   private boolean isSatisfiable(Domino domino) {
     return compatible(domino).anyMatch(Objects::nonNull);
   }
 
-  private State successor(Domino leaf, Domino domino) {
+  private Stream<State> seedSuccessors(Domino leaf) {
+    return compatible(leaf).map(domino -> successor(train -> train.addNode(domino)));
+  }
+
+  private State successor(Consumer<MutableGraph<Domino>> updateTrain) {
     var train = Graphs.copyOf(train());
-    train.putEdge(leaf, domino);
+    updateTrain.accept(train);
     var remaining = Sets.difference(remaining(), train.nodes());
     return new State(train, remaining, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
   }

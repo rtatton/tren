@@ -48,6 +48,6 @@ public record Domino(int top, int bottom) {
 
   @Override
   public int hashCode() {
-    return top + bottom;
+    return value();
   }
 }

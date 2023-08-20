@@ -15,6 +15,10 @@ public record Domino(int top, int bottom) {
     return new Domino(top, bottom);
   }
 
+  public static Domino ofDouble(int value) {
+    return of(value, value);
+  }
+
   public int value() {
     return top + bottom;
   }
@@ -24,11 +28,8 @@ public record Domino(int top, int bottom) {
   }
 
   public Domino oriented(Domino domino) {
-    return equals(domino) ? null : oriented(domino.bottom);
-  }
-
-  public Domino oriented(int value) {
-    return contains(value) ? (top == value ? this : reversed()) : null;
+    if (equals(domino) || !contains(domino.bottom)) return null;
+    return top == domino.bottom ? this : reversed();
   }
 
   public Domino reversed() {

@@ -84,16 +84,13 @@ public final class TrainBuilder {
   /** Returns an optimal Mexican train by applying the A* search algorithm. */
   public State build() {
     var frontier = newFrontier(dominos);
-    var current = frontier.peek();
-    var best = current;
+    var best = frontier.peek();
     while (!frontier.isEmpty()) {
-      current = frontier.remove();
+      var current = frontier.remove();
       best = best.max(current);
       for (var successor : current.successors(seed)) {
         var value = current.value() + distance.between(current, successor);
-        if (value > successor.value()) {
-          frontier.add(successor.withUtility(value, heuristic));
-        }
+        frontier.add(successor.withUtility(value, heuristic));
       }
     }
     return best;

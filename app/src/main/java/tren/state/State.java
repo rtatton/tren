@@ -41,8 +41,7 @@ public final class State extends PartialState implements Comparable<State> {
   }
 
   public List<State> successors(int seed) {
-    var leaves = (value == 0) ? seedLeaves(seed) : leaves();
-    return leaves.stream().flatMap(this::leafSuccessors).toList();
+    return (value == 0 ? leaves(seed) : leaves()).flatMap(this::leafSuccessors).toList();
   }
 
   public double value() {
@@ -63,12 +62,30 @@ public final class State extends PartialState implements Comparable<State> {
     return "%s[value=%f, fitness=%f]".formatted(getClass().getSimpleName(), value, fitness);
   }
 
-  private Stream<State> leafSuccessors(Domino leaf) {
-    return compatible(leaf).map(domino -> successor(leaf, domino));
+  private Stream<Domino> leaves(int seed) {
+    return compatible(Domino.ofDouble(seed));
   }
 
   private Stream<Domino> compatible(Domino domino) {
     return remaining().stream().map(d -> d.oriented(domino)).filter(Objects::nonNull);
+  }
+
+  private Stream<Domino> leaves() {
+    return train().nodes().stream().filter(this::isLeaf);
+  }
+
+  private boolean isLeaf(Domino domino) {
+    return train().outDegree(domino) < (domino.isDouble() ? 3 : 1);
+  }
+
+  private Stream<State> leafSuccessors(Domino leaf) {
+    return compatible(leaf)
+        .filter(domino -> !domino.isDouble() || isSatisfiable(domino))
+        .map(domino -> successor(leaf, domino));
+  }
+
+  private boolean isSatisfiable(Domino domino) {
+    return compatible(domino).anyMatch(Objects::nonNull);
   }
 
   private State successor(Domino leaf, Domino domino) {
@@ -76,29 +93,5 @@ public final class State extends PartialState implements Comparable<State> {
     train.putEdge(leaf, domino);
     var remaining = Sets.difference(remaining(), train.nodes());
     return new State(train, remaining, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-  }
-
-  private List<Domino> seedLeaves(int seed) {
-    return remaining().stream()
-        .map(domino -> domino.oriented(seed))
-        .filter(Objects::nonNull)
-        .toList();
-  }
-
-  private List<Domino> leaves() {
-    return train().nodes().stream().filter(this::isLeaf).toList();
-  }
-
-  private boolean isLeaf(Domino domino) {
-    return domino.isDouble() ? isDoubleLeaf(domino) : isNonDoubleLeaf(domino);
-  }
-
-  private boolean isDoubleLeaf(Domino domino) {
-    // A double is only a valid leaf if there exists another domino to satisfy it.
-    return train().outDegree(domino) < 3 && compatible(domino).findAny().isPresent();
-  }
-
-  private boolean isNonDoubleLeaf(Domino domino) {
-    return train().outDegree(domino) == 0;
   }
 }

@@ -65,14 +65,6 @@ public final class DominoTests {
   }
 
   @ParameterizedTest
-  @MethodSource("orientedDominosWithValue")
-  public void
-      dominoOrientedWithValue_IsOriginalWhenValueIsBottom_IsReversedWhenValueIsTop_IsNullWhenValueIsNeitherTopOrBottom(
-          Domino domino, int value, Domino expected) {
-    assertEquals(expected, domino.oriented(value));
-  }
-
-  @ParameterizedTest
   @MethodSource("orientedDominosWithDomino")
   public void
       dominoOrientedWithDomino_IsOriginalWhenDominoBottomIsBottom_IsReversedWhenDominoTopIsTop_IsNullWhenDominoIsNeitherTopOrBottom(
@@ -95,15 +87,6 @@ public final class DominoTests {
         .add(Arguments.of(1, 1, -1))
         .add(Arguments.of(-1, 0, -1))
         .add(Arguments.of(-2, -3, 5))
-        .build();
-  }
-
-  private static Stream<Arguments> orientedDominosWithValue() {
-    return Stream.<Arguments>builder()
-        .add(Arguments.of(Domino.of(1, 0), 1, Domino.of(0, 1)))
-        .add(Arguments.of(Domino.of(0, 1), 1, Domino.of(0, 1)))
-        .add(Arguments.of(Domino.of(1, 2), 3, null))
-        .add(Arguments.of(Domino.of(2, 1), 3, null))
         .build();
   }
 

@@ -29,7 +29,7 @@ public record Domino(int top, int bottom) {
 
   public Domino oriented(Domino domino) {
     if (equals(domino) || !contains(domino.bottom)) return null;
-    return top == domino.bottom ? this : reversed();
+    else return top == domino.bottom ? this : reversed();
   }
 
   public Domino reversed() {
@@ -44,7 +44,7 @@ public record Domino(int top, int bottom) {
   public boolean equals(Object obj) {
     if (obj instanceof Domino d)
       return (top == d.top && bottom == d.bottom) || (top == d.bottom && bottom == d.top);
-    return false;
+    else return false;
   }
 
   @Override

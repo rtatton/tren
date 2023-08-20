@@ -38,12 +38,12 @@ public class PartialState {
     return value(train.nodes());
   }
 
-  public int remainingValue() {
-    return value(remaining);
-  }
-
   public int remainingSize() {
     return remaining.size();
+  }
+
+  public int remainingValue() {
+    return value(remaining);
   }
 
   public Graph<Domino> train() {

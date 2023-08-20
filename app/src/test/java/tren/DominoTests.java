@@ -15,21 +15,20 @@ public final class DominoTests {
   @MethodSource("topsAndBottoms")
   public void dominoValueIsSumOfTopAndBottom(int top, int bottom) {
     var sum = top + bottom;
-    assertEquals(sum, new Domino(top, bottom).value());
-    assertEquals(sum, new Domino(bottom, top).value());
+    assertEquals(sum, Domino.of(top, bottom).value());
+    assertEquals(sum, Domino.of(bottom, top).value());
   }
 
   @ParameterizedTest
   @MethodSource("topsAndBottoms")
   public void dominoIsDoubleWhenTopAndBottomAreEqual(int top, int bottom) {
-    var isDouble = top == bottom;
-    assertEquals(isDouble, new Domino(top, bottom).isDouble());
+    assertEquals(top == bottom, Domino.of(top, bottom).isDouble());
   }
 
   @ParameterizedTest
   @MethodSource("topsAndBottoms")
   public void dominoReversedIsEqualToBottomAndTopOfOriginalDomino(int top, int bottom) {
-    var original = new Domino(top, bottom);
+    var original = Domino.of(top, bottom);
     var reversed = original.reversed();
     assertEquals(original.top(), reversed.bottom());
     assertEquals(original.bottom(), reversed.top());
@@ -38,7 +37,7 @@ public final class DominoTests {
   @ParameterizedTest
   @MethodSource("containsDominos")
   public void dominoContainsValueIfEqualToTopOrBottom(int top, int bottom, int value) {
-    var domino = new Domino(top, bottom);
+    var domino = Domino.of(top, bottom);
     assertEquals(domino.top() == value || domino.bottom() == value, domino.contains(value));
   }
 
@@ -46,7 +45,7 @@ public final class DominoTests {
   @MethodSource("topsAndBottoms")
   @SuppressWarnings({"SimplifiableAssertion", "EqualsWithItself"})
   public void dominoEqualsOriginalOrReversed(int top, int bottom) {
-    var domino = new Domino(top, bottom);
+    var domino = Domino.of(top, bottom);
     assertTrue(domino.equals(domino));
     assertTrue(domino.equals(domino.reversed()));
   }
@@ -55,13 +54,13 @@ public final class DominoTests {
   @MethodSource("topsAndBottoms")
   public void dominoEqualsOnlyDominoTypes(int top, int bottom) {
     var notDomino = new Object();
-    assertNotEquals(notDomino, new Domino(top, bottom).equals(notDomino));
+    assertNotEquals(notDomino, Domino.of(top, bottom).equals(notDomino));
   }
 
   @ParameterizedTest
   @MethodSource("topsAndBottoms")
   public void dominoHashCodeIsSameForOriginalAndReversed(int top, int bottom) {
-    var domino = new Domino(top, bottom);
+    var domino = Domino.of(top, bottom);
     assertEquals(domino.hashCode(), domino.reversed().hashCode());
   }
 
@@ -101,19 +100,19 @@ public final class DominoTests {
 
   private static Stream<Arguments> orientedDominosWithValue() {
     return Stream.<Arguments>builder()
-        .add(Arguments.of(new Domino(1, 0), 1, new Domino(0, 1)))
-        .add(Arguments.of(new Domino(0, 1), 1, new Domino(0, 1)))
-        .add(Arguments.of(new Domino(1, 2), 3, null))
-        .add(Arguments.of(new Domino(2, 1), 3, null))
+        .add(Arguments.of(Domino.of(1, 0), 1, Domino.of(0, 1)))
+        .add(Arguments.of(Domino.of(0, 1), 1, Domino.of(0, 1)))
+        .add(Arguments.of(Domino.of(1, 2), 3, null))
+        .add(Arguments.of(Domino.of(2, 1), 3, null))
         .build();
   }
 
   private static Stream<Arguments> orientedDominosWithDomino() {
     return Stream.<Arguments>builder()
-        .add(Arguments.of(new Domino(1, 0), new Domino(2, 0), new Domino(0, 1)))
-        .add(Arguments.of(new Domino(0, 1), new Domino(2, 0), new Domino(0, 1)))
-        .add(Arguments.of(new Domino(1, 2), new Domino(3, 4), null))
-        .add(Arguments.of(new Domino(2, 1), new Domino(3, 4), null))
+        .add(Arguments.of(Domino.of(1, 0), Domino.of(2, 0), Domino.of(0, 1)))
+        .add(Arguments.of(Domino.of(0, 1), Domino.of(2, 0), Domino.of(0, 1)))
+        .add(Arguments.of(Domino.of(1, 2), Domino.of(3, 4), null))
+        .add(Arguments.of(Domino.of(2, 1), Domino.of(3, 4), null))
         .build();
   }
 }

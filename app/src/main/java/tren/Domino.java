@@ -11,6 +11,10 @@ package tren;
  */
 public record Domino(int top, int bottom) {
 
+  public static Domino of(int top, int bottom) {
+    return new Domino(top, bottom);
+  }
+
   public int value() {
     return top + bottom;
   }
@@ -28,7 +32,7 @@ public record Domino(int top, int bottom) {
   }
 
   public Domino reversed() {
-    return new Domino(bottom, top);
+    return of(bottom, top);
   }
 
   public boolean contains(int value) {

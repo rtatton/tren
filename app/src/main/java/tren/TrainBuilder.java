@@ -1,10 +1,8 @@
 package tren;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 import tren.function.Distance;
@@ -27,7 +25,7 @@ public final class TrainBuilder {
   private Integer seed;
 
   private TrainBuilder() {
-    this.dominos = new HashSet<>();
+    this.dominos = Sets.newHashSet();
   }
 
   /** Returns an empty train builder. */
@@ -56,7 +54,7 @@ public final class TrainBuilder {
    * used to build the train.
    */
   public TrainBuilder addDomino(int top, int bottom) {
-    dominos.add(new Domino(top, bottom));
+    dominos.add(Domino.of(top, bottom));
     return this;
   }
 
@@ -85,7 +83,6 @@ public final class TrainBuilder {
 
   /** Returns an optimal Mexican train by applying the A* search algorithm. */
   public State build() {
-    checkState();
     var frontier = newFrontier(dominos);
     var current = frontier.peek();
     var best = current;
@@ -102,15 +99,8 @@ public final class TrainBuilder {
     return best;
   }
 
-  private void checkState() {
-    Preconditions.checkNotNull(seed, "seed");
-    Preconditions.checkNotNull(distance, "distance");
-    Preconditions.checkNotNull(heuristic, "heuristic");
-    Preconditions.checkState(!dominos.isEmpty(), "At least 1 domino must be provided");
-  }
-
   private Queue<State> newFrontier(Collection<Domino> dominos) {
-    var frontier = new PriorityQueue<State>(Comparator.reverseOrder());
+    var frontier = Queues.<State>newPriorityQueue();
     frontier.add(State.initial(dominos, heuristic));
     return frontier;
   }
